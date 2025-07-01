@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Equipment - IT Ticketing System{% endblock %}
+
+{% block content %}
+    <h2>Add New Equipment</h2>
+    <form method="POST" action="{{ url_for('inventory.add_equipment') }}">
+        {{ form.hidden_tag() }}
+        {% include 'inventory/_equipment_form_fields.html' %}
+    </form>
+    <p><a href="{{ url_for('inventory.list_equipment') }}">Back to Inventory List</a></p>
+{% endblock %}

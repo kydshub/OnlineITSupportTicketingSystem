@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Equipment Inventory - IT Ticketing System{% endblock %}
+
+{% block content %}
+    <h2>Equipment Inventory</h2>
+    <p><a href="{{ url_for('inventory.add_equipment') }}">Add New Equipment</a></p>
+
+    {% if equipment_list %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Serial Number</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in equipment_list %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td><a href="{{ url_for('inventory.view_equipment', equipment_id=item.id) }}">{{ item.name }}</a></td>
+                        <td>{{ item.type }}</td>
+                        <td>{{ item.serial_number or 'N/A' }}</td>
+                        <td>{{ item.status }}</td>
+                        <td>
+                            {% if item.assigned_user %}
+                                {{ item.assigned_user.username }}
+                            {% elif item.status == 'Assigned' %}
+                                Error: Assigned but no user linked
+                            {% else %}
+                                Unassigned
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('inventory.view_equipment', equipment_id=item.id) }}">View</a>
+                            {# Edit link will be on the view page, or here too if desired #}
+                            {# <a href="{{ url_for('inventory.edit_equipment', equipment_id=item.id) }}">Edit</a> #}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No equipment found in inventory.</p>
+    {% endif %}
+{% endblock %}

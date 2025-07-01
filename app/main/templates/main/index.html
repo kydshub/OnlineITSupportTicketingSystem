@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Homepage - IT Ticketing System{% endblock %}
+
+{% block content %}
+    <h1>Welcome to the IT Support Ticketing System</h1>
+
+    {% if current_user.is_authenticated %}
+        <p>Hello, {{ current_user.username }}!</p>
+        <p>What would you like to do today?</p>
+        <ul>
+            <li><a href="{{ url_for('tickets.list_tickets') }}">View Your Tickets</a></li>
+            <li><a href="{{ url_for('tickets.create_ticket') }}">Create a New Ticket</a></li>
+            {% if current_user.role in ['it_support', 'admin'] %}
+                <li><a href="{{ url_for('inventory.list_equipment') }}">Manage Equipment Inventory</a></li>
+                <li><a href="{{ url_for('tickets.list_tickets') }}">View All Tickets</a></li>
+                {# Consider a dedicated dashboard for IT later #}
+            {% endif %}
+        </ul>
+    {% else %}
+        <p>This system allows you to submit and track IT support requests, and helps our IT team manage equipment inventory.</p>
+        <p>Please <a href="{{ url_for('auth.login') }}">login</a> to access the system or <a href="{{ url_for('auth.register') }}">register</a> if you are a new user.</p>
+    {% endif %}
+
+    <hr>
+    <h3>System Overview</h3>
+    <p>Our IT Ticketing System provides the following features:</p>
+    <ul>
+        <li>User registration and login.</li>
+        <li>Creation and management of support tickets.</li>
+        <li>Prioritization and status tracking for tickets.</li>
+        <li>Commenting on tickets for ongoing communication.</li>
+        <li>IT equipment inventory management (for authorized personnel).</li>
+        <li>Linking support tickets to specific equipment items.</li>
+    </ul>
+
+{% endblock %}
