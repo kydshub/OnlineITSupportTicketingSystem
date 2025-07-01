@@ -1,0 +1,64 @@
+<p>
+    {{ form.name.label }}<br>
+    {{ form.name(size=60) }}<br>
+    {% for error in form.name.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.type.label }}<br>
+    {{ form.type() }}<br>
+    {% for error in form.type.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.manufacturer.label }}<br>
+    {{ form.manufacturer(size=40) }}<br>
+    {% for error in form.manufacturer.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.model_number.label }}<br>
+    {{ form.model_number(size=40) }}<br>
+    {% for error in form.model_number.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.serial_number.label }}<br>
+    {{ form.serial_number(size=40) }}<br>
+    {% for error in form.serial_number.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.purchase_date.label }}<br>
+    {{ form.purchase_date() }}<br>
+    {% for error in form.purchase_date.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.warranty_expiry_date.label }}<br>
+    {{ form.warranty_expiry_date() }}<br>
+    {% for error in form.warranty_expiry_date.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.status.label }}<br>
+    {{ form.status() }}<br>
+    {% for error in form.status.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>
+    {{ form.notes.label }}<br>
+    {{ form.notes(rows=5, cols=60) }}<br>
+    {% for error in form.notes.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</p>
+<p>{{ form.submit() }}</p>

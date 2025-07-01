@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket #{{ ticket.id }}: {{ ticket.title }} - IT Ticketing System{% endblock %}
+
+{% block content %}
+    <h2>Ticket #{{ ticket.id }}: {{ ticket.title }}</h2>
+    <p><strong>Status:</strong> {{ ticket.status }}</p>
+    <p><strong>Priority:</strong> {{ ticket.priority }}</p>
+    <p><strong>Reported by:</strong> {{ ticket.reporter.username }} on {{ ticket.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+    <p><strong>Assigned to:</strong> {{ ticket.assignee.username if ticket.assignee else 'Unassigned' }}</p>
+    <p><strong>Last updated:</strong> {{ ticket.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+    {% if ticket.resolved_at %}
+        <p><strong>Resolved at:</strong> {{ ticket.resolved_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+    {% endif %}
+    {% if ticket.associated_equipment %}
+        <p><strong>Associated Equipment:</strong> <a href="{{ url_for('inventory.view_equipment', equipment_id=ticket.associated_equipment.id) }}">{{ ticket.associated_equipment.name }} ({{ ticket.associated_equipment.serial_number or 'No S/N' }})</a></p>
+    {% endif %}
+
+    <hr>
+    <h3>Description</h3>
+    <pre>{{ ticket.description }}</pre>
+    <hr>
+
+    {% if current_user.role in ['it_support', 'admin'] %}
+        <h3>Update Ticket</h3>
+        <form method="POST" action="{{ url_for('tickets.update_ticket', ticket_id=ticket.id) }}">
+            {{ update_form.hidden_tag() }}
+            <p>
+                {{ update_form.title.label }}<br>
+                {{ update_form.title(size=60) }}<br>
+                {% for error in update_form.title.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ update_form.description.label }}<br>
+                {{ update_form.description(rows=5, cols=60) }}<br>
+                {% for error in update_form.description.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ update_form.status.label }} {{ update_form.status() }}
+                &nbsp;&nbsp;
+                {{ update_form.priority.label }} {{ update_form.priority() }}
+            </p>
+            <p>
+                {{ update_form.assignee_id.label }} {{ update_form.assignee_id() }}
+            </p>
+            <p>
+                {{ update_form.equipment_id.label }}<br>
+                {{ update_form.equipment_id() }}<br>
+                {% for error in update_form.equipment_id.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ update_form.submit() }}</p>
+        </form>
+        <hr>
+    {% endif %}
+
+    <h3>Comments</h3>
+    {% for comment in ticket.comments %}
+        <div class="comment">
+            <p><strong>{{ comment.author.username }}</strong> <small>({{ comment.created_at.strftime('%Y-%m-%d %H:%M') }})</small>:</p>
+            <pre>{{ comment.body }}</pre>
+        </div>
+    {% else %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    {% if comment_form %}
+        <h4>Add a Comment</h4>
+        <form method="POST" action="{{ url_for('tickets.add_comment', ticket_id=ticket.id) }}">
+            {{ comment_form.hidden_tag() }}
+            <p>
+                {{ comment_form.body.label }}<br>
+                {{ comment_form.body(rows=4, cols=60) }}<br>
+                {% for error in comment_form.body.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ comment_form.submit() }}</p>
+        </form>
+    {% endif %}
+
+    <p><a href="{{ url_for('tickets.list_tickets') }}">Back to Ticket List</a></p>
+{% endblock %}

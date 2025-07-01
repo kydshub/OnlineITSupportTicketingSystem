@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}View Equipment: {{ equipment.name }} - IT Ticketing System{% endblock %}
+
+{% block content %}
+    <h2>Equipment Details: {{ equipment.name }}</h2>
+    <p><strong>ID:</strong> {{ equipment.id }}</p>
+    <p><strong>Type:</strong> {{ equipment.type }}</p>
+    <p><strong>Manufacturer:</strong> {{ equipment.manufacturer or 'N/A' }}</p>
+    <p><strong>Model Number:</strong> {{ equipment.model_number or 'N/A' }}</p>
+    <p><strong>Serial Number:</strong> {{ equipment.serial_number or 'N/A' }}</p>
+    <p><strong>Purchase Date:</strong> {{ equipment.purchase_date.strftime('%Y-%m-%d') if equipment.purchase_date else 'N/A' }}</p>
+    <p><strong>Warranty Expiry:</strong> {{ equipment.warranty_expiry_date.strftime('%Y-%m-%d') if equipment.warranty_expiry_date else 'N/A' }}</p>
+    <p><strong>Status:</strong> {{ equipment.status }}</p>
+    <p><strong>Assigned to:</strong>
+        {% if equipment.assigned_user %}
+            {{ equipment.assigned_user.username }} ({{ equipment.assigned_user.email }})
+        {% elif equipment.status == 'Assigned' %}
+            <span style="color:red;">Error: Status is 'Assigned' but no user is linked.</span>
+        {% else %}
+            Unassigned / In Stock
+        {% endif %}
+    </p>
+    <div>
+        <strong>Notes:</strong>
+        <pre>{{ equipment.notes or 'No notes.' }}</pre>
+    </div>
+    <p><strong>Created At:</strong> {{ equipment.created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+    <p><strong>Last Updated:</strong> {{ equipment.updated_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}</p>
+
+    <hr>
+    {% if current_user.role in ['it_support', 'admin'] %}
+        <h3>Edit Equipment Details</h3>
+        <form method="POST" action="{{ url_for('inventory.edit_equipment', equipment_id=equipment.id) }}">
+            {{ form.hidden_tag() }}
+            {% include 'inventory/_equipment_form_fields.html' %}
+        </form>
+        <hr>
+        <h3>Assign Equipment</h3>
+        <form method="POST" action="{{ url_for('inventory.assign_equipment', equipment_id=equipment.id) }}">
+            {{ assign_form.hidden_tag() }}
+            <p>
+                {{ assign_form.assigned_to_user_id.label }}<br>
+                {{ assign_form.assigned_to_user_id() }}<br>
+                {% for error in assign_form.assigned_to_user_id.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ assign_form.submit() }}</p>
+        </form>
+        <hr>
+    {% endif %}
+
+    <h3>Associated Tickets</h3>
+    {% if equipment.tickets %}
+        <ul>
+        {% for ticket in equipment.tickets %}
+            <li><a href="{{ url_for('tickets.view_ticket', ticket_id=ticket.id) }}">Ticket #{{ ticket.id }}: {{ ticket.title }}</a> (Status: {{ ticket.status }})</li>
+        {% else %}
+            <p>No tickets are currently associated with this equipment.</p>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tickets are currently associated with this equipment.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('inventory.list_equipment') }}">Back to Inventory List</a></p>
+{% endblock %}

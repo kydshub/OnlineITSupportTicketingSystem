@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Ticket - IT Ticketing System{% endblock %}
+
+{% block content %}
+    <h2>Create New Ticket</h2>
+    <form method="POST" action="{{ url_for('tickets.create_ticket') }}">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title(size=60) }}<br>
+            {% for error in form.title.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description(rows=10, cols=60) }}<br>
+            {% for error in form.description.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.priority.label }}<br>
+            {{ form.priority() }}<br>
+            {% for error in form.priority.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.equipment_id.label }}<br>
+            {{ form.equipment_id() }}<br>
+            {% for error in form.equipment_id.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
